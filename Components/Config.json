@@ -1,4 +1,4 @@
 {
-    "API_URL": "http://localhost:3005"
+    "API_URL": "https://back-auth-five.vercel.app"
     
   }
