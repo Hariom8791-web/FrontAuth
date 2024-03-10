@@ -91,12 +91,12 @@ function ChetakMail() {
     reader.readAsText(file); // Read the file as text
   };
   const logout = () => {
-    axios.post('http://localhost:3005/auth/logout')
-      .then(() => {
-        // Delete session cookie
-        document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        // Navigate to login page
-        navigate('/login');
+    axios.post('http://localhost:3005/auth/logout',{name})
+      .then((res) => {
+        if(res.data.status){
+          navigate('/login');
+        }
+        
       })
       .catch(err => console.error('Logout error:', err));
   };
