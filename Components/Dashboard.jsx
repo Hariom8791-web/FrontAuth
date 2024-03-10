@@ -25,7 +25,7 @@ const Dashboard = () => {
 
 
   const logout = () => {
-    axios.post('http://localhost:3005/auth/logout',{Name})
+    axios.post(config.API_URL+'/auth/logout',{Name})
       .then((res) => {
         if(res.data.status){
           navigate('/login');
