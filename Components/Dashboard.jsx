@@ -12,6 +12,7 @@ const Dashboard = () => {
       .then(res=>{
           console.log(res)
           if(!res.data.valid){
+            console.log("receive false for some reason")
               navigate('/login')
           }
           else{
