@@ -91,7 +91,7 @@ function ChetakMail() {
     reader.readAsText(file); // Read the file as text
   };
   const logout = () => {
-    axios.post('http://localhost:3005/auth/logout')
+    axios.post(config.API_URL+'/auth/logout')
       .then((res) => {
         if(res.status){
           navigate('./Login')
