@@ -92,11 +92,10 @@ function ChetakMail() {
   };
   const logout = () => {
     axios.post('http://localhost:3005/auth/logout')
-      .then(() => {
-        // Delete session cookie
-        document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        // Navigate to login page
-        navigate('/login');
+      .then((res) => {
+        if(res.status){
+          navigate('./Login')
+        }
       })
       .catch(err => console.error('Logout error:', err));
   };
