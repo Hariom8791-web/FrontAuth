@@ -22,7 +22,7 @@ function App() {
     <BrowserRouter>
       <Routes>
   
-   {/* <Route path="/" element={<ExternalLink url="https://gulal-revolution.vercel.app" />} />  */}
+  <Route path="/" element={<ExternalLink url="https://gulal-revolution.vercel.app" />} />  
    
 
         <Route path="/signup" element={<Signup/>}></Route>
