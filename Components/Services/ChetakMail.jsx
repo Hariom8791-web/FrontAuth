@@ -94,7 +94,7 @@ function ChetakMail() {
     axios.post(config.API_URL+'/auth/logout')
       .then((res) => {
         if(res.status){
-          navigate('./Login')
+          navigate('/Login')
         }
       })
       .catch(err => console.error('Logout error:', err));
