@@ -6,17 +6,18 @@ import config from './Config.json'
 const Dashboard = () => {
   const navigate=useNavigate()
   const[Name,setName]=useState('')
+  const[Appemail,setAppemail]=useState('')
   axios.defaults.withCredentials=true;
   useEffect(()=>{
       axios.get(config.API_URL+'/auth/Dashboard')
       .then(res=>{
           console.log(res)
-          if(!res.data.valid){
-            console.log("receive false for some reason")
+          if(!res.data.status){
               navigate('/login')
           }
           else{
               setName(res.data.username)
+              setAppemail(res.data.Appemail)
           }
       })
       .catch(err=>console.log(err))
@@ -24,20 +25,28 @@ const Dashboard = () => {
 
 
 
-  const logout = () => {
-    axios.post(config.API_URL+'/auth/logout',{Name})
+const logout = () => {
+    axios.post(config.API_URL+'/auth/Logout')
       .then((res) => {
-        if(res.data.status){
-          navigate('/login');
+        // Delete session cookie
+        if(res.status){navigate('/login');}
+        // Navigate to login page
+        else{
+          console.log("error while logout ")
         }
         
       })
       .catch(err => console.error('Logout error:', err));
   };
   
+
+
+
+
+
   return (
     <div>
-      Welcome  {Name} This is Your Dashboard  We apologies For Bad Experience and we are Working on it 
+      Welcome  {Name} This is Your  {Appemail} This is Your Dashboard  We apologies For Bad Experience and we are Working on it 
       <br></br>
       <br />
       <br />
