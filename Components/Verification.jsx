@@ -17,8 +17,9 @@ export const Verification = () => {
                     
         }).then(res=>{
                             if(res.data.status){
+                                alert("Registered Successfully")
                                 console.log(res.data.message)
-                                navigate('/AppPasssword')
+                                navigate('/Login')
                             }
                             else{
                                     SetError("Enter OTP CORRECTLY")

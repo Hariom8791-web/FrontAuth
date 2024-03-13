@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from 'react'
-import './elements/forgotpassword.css'
+import './forgotpassword.css'
 import Axios from "axios"
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import config from './Config.json';
@@ -17,6 +17,7 @@ const Resetpassword = () => {
         password,
       }).then(response => {
           if(response.data.status) {
+            alert("Successfully Updated Password")
               navigate('/login')
           }
           console.log(response.data)
@@ -25,8 +26,10 @@ const Resetpassword = () => {
       })
     };
     return (
-        <div>
+        <div className='divofforgot'>
             <h2>Reset Your Password Here !</h2>
+            <br />
+            <h5> Be aware ! Case sensitive</h5>
             <form onSubmit={handleSubmit} className='sign-up-container' >
               
 

@@ -48,8 +48,9 @@ const Login = () => {
                     
 
         })
-        .catch(err=>{
-            console.log(err)
+        .catch(res=>{
+            console.log(res)
+            setError("Wrong Credentials >>Case sensitive ")
         })
     }
 
@@ -64,19 +65,23 @@ const Login = () => {
                                 <figure><img src={singupImage} alt="sing up image"/></figure>
                                 {/* <a href="#" className="signup-image-link">Create an account</a> */}
                                 <Link to ="/Signup" className="signup-image-link"> Create an Account</Link>
+                                
                             </div>
 
                             <div className="signin-form">
                                 <h2 className="form-title">LOG IN</h2>
+                                <br />
+                                <h4> Be aware ! Case sensitive</h4>
+                                <br />
                                 {error && <p style={{color:"red"}} >*{error}</p>}
                                 <form onSubmit={handlelogin} className="register-form" id="login-form">
                                     <div className="form-group">
                                         <label htmlfor="Email"><i className="zmdi zmdi-account material-icons-name"></i></label>
-                                        <input type="text" name="your_name" id="your_name" placeholder="Your Email"onChange={(e)=>{setEmail(e.target.value)}} />
+                                        <input type="text" name="your_name" id="your_name" placeholder="Your Email"onChange={(e)=>{setEmail(e.target.value)}} required />
                                     </div>
                                     <div className="form-group">
                                         <label htmlfor="password"><i className="zmdi zmdi-lock"></i></label>
-                                        <input type="password" name="your_pass" id="your_pass" placeholder="Password" onChange={(e)=>Setpassword(e.target.value)} />
+                                        <input type="password" name="your_pass" id="your_pass" placeholder="Password" onChange={(e)=>Setpassword(e.target.value)} required />
                                     </div>
                                     <div className="form-group">
                                         <input type="checkbox" name="remember-me" id="remember-me" className="agree-term" />
@@ -84,6 +89,7 @@ const Login = () => {
                                     </div>
                                     <div className="form-group form-button">
                                         <input type="submit"  id="signin" className="form-submit"  />
+                                        <br />
                                         <br />
                                         <Link to='/Forgotpassword'>Forgot Password ?</Link>
                                     </div>

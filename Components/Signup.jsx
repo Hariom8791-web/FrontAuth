@@ -51,19 +51,21 @@ return (
         <div class="signup-content">
             <div class="signup-form">
                 <h2 class="form-title">Sign up</h2>
+                <br />
+                <h4> Be aware ! Case sensitive</h4>
                 {error && <p style={{color:"red"}} >**{error}**</p>}
                 <form  class="register-form" id="register-form" onSubmit={handleSubmit}>
                     <div class="form-group">
                         <label htmlFor="username"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                        <input type="text" name="name" id="name" placeholder="Username" onChange={(e)=>setUsername(e.target.value)}/>
+                        <input type="text" name="name" id="name" placeholder="Username" onChange={(e)=>setUsername(e.target.value)} required/>
                     </div>
                     <div class="form-group">
                         <label htmlFor="email"><i class="zmdi zmdi-email"></i></label>
-                        <input type="email" name="email" id="email" placeholder="Your Email"  onChange={(e)=>{setEmail(e.target.value)}}/>
+                        <input type="email" name="email" id="email" placeholder="Your Email"  onChange={(e)=>{setEmail(e.target.value)}} required/>
                     </div>
                     <div class="form-group">
                         <label htmlFor="password"><i class="zmdi zmdi-lock"></i></label>
-                        <input type="password" name="password" id="pass" placeholder="Password" onChange={(e)=>{setPassword(e.target.value)}}/>
+                        <input type="password" name="password" id="pass" placeholder="Password" onChange={(e)=>{setPassword(e.target.value)}} required/>
                     </div>
                     {/* <div class="form-group">
                         <label htmlFor="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>

@@ -45,6 +45,7 @@ function ChetakMail() {
         .then(res=>{
             console.log(res)
             if(!res.data.status){
+              alert("You are log out ")
                 navigate('/login')
             }
             else{
@@ -69,7 +70,7 @@ function ChetakMail() {
             window.open('https://docs.google.com/forms/d/e/1FAIpQLSeb50p6jiZKTfeNBhatuB91tlLY30DlinRd_drNv0hIjxdYTQ/viewform?usp=sf_link', '_blank');
         }
        else{
-        setdisplaytext('Failed ! There is some issue Kindly try after some hour')
+        setdisplaytext(res.data.message)
        }
       
      })
@@ -94,7 +95,7 @@ function ChetakMail() {
     axios.post(config.API_URL+'/auth/logout')
       .then((res) => {
         if(res.status){
-          navigate('/Login')
+          navigate('/login')
         }
       })
       .catch(err => console.error('Logout error:', err));
@@ -102,6 +103,7 @@ function ChetakMail() {
 
 
   return (
+    
     <div className="formbold-main-wrapper">
       <div className="instruction">
         <br />
@@ -143,7 +145,9 @@ function ChetakMail() {
         <br></br>
         <li><h4>Your feedback Valuable to Us Kindly fill the feedback form or Any Kind of service you want Contact Freely </h4></li>
         <br></br>
-        <button onClick={logout}>Logout</button>
+        <button  className="btn btn-primary" onClick={logout}>Logout</button>
+        <br />
+        <br />
         <Link to='/dashboard'> Dashboard</Link>
     </ol>
 
@@ -161,12 +165,12 @@ function ChetakMail() {
           <div className="formbold-input-flex">
             <div>
                 <h4>Select Your CSV file </h4>
-                <label htmlFor="firstname" >   </label>
+                <label htmlFor="firstname"  required>   </label>
                 <input
                 type="file" accept=".csv" onChange={handleFileUpload}
                 
                 className="formbold-form-input"
-                />
+                 required />
             </div>
             <div>
                 <h4>Select Your HTML Template</h4>

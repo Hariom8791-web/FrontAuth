@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './elements/forgotpassword.css'
+import './forgotpassword.css'
 import Axios from "axios"
 import { Link, useNavigate } from 'react-router-dom'
 import config from './Config.json';
@@ -27,7 +27,7 @@ const Forgotpassword = () => {
             })
     }
     return (
-        <div>
+        <div className='divofforgot'>
             <h2>Enter Your Email for Reset Password !</h2>
             <form onSubmit={handleSubmit} className='sign-up-container' >
              
