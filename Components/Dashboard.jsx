@@ -103,7 +103,7 @@ else{
             </div>
             <i class="bx bx-envelope mail"></i>
           </div>
-          {/* <div class="box">
+           <div class="box">
             <div class="right-side">
               <div class="box-topic">Free!</div>
               <div class="number">3000 / Month</div>
@@ -113,8 +113,8 @@ else{
               </div>
             </div>
             <i class="bx bxs-cart-add cart two"></i>
-          </div> */}
-          {/* <div class="box">
+          </div> 
+         <div class="box">
             <div class="right-side">
               <div class="box-topic">Total Profit</div>
               <div class="number">$12,876</div>
@@ -124,8 +124,8 @@ else{
               </div>
             </div>
             <i class="bx bx-cart cart three"></i>
-          </div> */}
-          {/* <div class="box">
+          </div>
+          <div class="box">
             <div class="right-side">
               <div class="box-topic">Total Return</div>
               <div class="number">11,086</div>
@@ -135,7 +135,7 @@ else{
               </div>
             </div>
             <i class="bx bxs-cart-download cart four"></i>
-          </div> */}
+          </div> 
         </div>
         </div>
       </section> 
