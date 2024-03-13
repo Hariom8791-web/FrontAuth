@@ -2,7 +2,7 @@ import React from 'react'
 import './Dash.css'
 export const Dash = () => {
   return (
- <div>
+ <div class="dashdiv">
 
 <div class="sidebar">
     <div class="logo-details">
