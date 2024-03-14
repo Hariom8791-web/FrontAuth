@@ -7,7 +7,7 @@ import  './Dash.css'
 const Dashboard = () => {
   const navigate=useNavigate()
   const[Name,setName]=useState('')
-  const[Appemail,setAppemail]=useState('hariomsingh8791@gmail.com')
+  const[Appemail,setAppemail]=useState('')
   axios.defaults.withCredentials=true;
   useEffect(()=>{
       axios.get(config.API_URL+'/auth/Dashboard')
@@ -19,10 +19,10 @@ const Dashboard = () => {
               navigate('/login')
           }
 
-          else{
-              setName(res.data.username)
-              setAppemail(res.data.Appemail)
-          }
+         if(res.data.status){
+          setName(res.data.username);
+          setAppemail(res.data.Appemail)
+         }
       })
       .catch(err=>console.log(err))
   },[])
