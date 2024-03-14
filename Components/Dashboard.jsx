@@ -13,17 +13,17 @@ const Dashboard = () => {
       axios.get(config.API_URL+'/auth/Dashboard')
       .then(res=>{
           console.log(res)
-         
+          if(res.data.status){
+          
+            setName(res.data.username);
+            setAppemail(res.data.Appemail)
+           }
           if(!res.data.status){
             alert("Your logged out")
               navigate('/login')
           }
 
-         if(res.data.status){
-          
-          setName(res.data.username);
-          setAppemail(res.data.Appemail)
-         }
+        
       })
       .catch(err=>console.log(err))
   },[])
