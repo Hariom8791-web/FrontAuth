@@ -31,7 +31,7 @@ export const AppPasssword = () => {
   
     const handleAppPassword=(e)=>{
         e.preventDefault()
-        Axios.defaults.withCredentials=true;
+        // Axios.defaults.withCredentials=true;
         Axios.post(config.API_URL+'/auth/AppPasssword',{Appemail,AppPassword,username})
         .then(res=>{
             console.log(res.data.message)
