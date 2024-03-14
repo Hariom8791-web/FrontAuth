@@ -50,7 +50,7 @@ const Login = () => {
         })
         .catch(res=>{
             console.log(res)
-            setError("Wrong Credentials >>Case sensitive ")
+            setError("Internal server error ")
         })
     }
 
