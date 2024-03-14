@@ -20,6 +20,7 @@ const Dashboard = () => {
           }
 
          if(res.data.status){
+          
           setName(res.data.username);
           setAppemail(res.data.Appemail)
          }
