@@ -12,7 +12,7 @@ export const Verification = () => {
         console.log(code,"handle verify working")
         
         e.preventDefault()
-        Axios.defaults.withCredentials=true;
+         Axios.defaults.withCredentials=true;
         Axios.post(config.API_URL+'/auth/Verification',{code
                     
         }).then(res=>{

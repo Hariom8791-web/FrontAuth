@@ -10,7 +10,7 @@ const Forgotpassword = () => {
     const navigate = useNavigate()
     const handleSubmit = (e) => {
         e.preventDefault()
-        Axios.defaults.withCredentials=true;
+         Axios.defaults.withCredentials=true;
         Axios.post(config.API_URL+'/auth/Forgotpassword', { email })
             .then(response => {
                 if (response.data.status) {
