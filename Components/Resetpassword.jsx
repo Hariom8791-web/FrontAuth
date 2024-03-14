@@ -12,7 +12,7 @@ const Resetpassword = () => {
   
     const handleSubmit = (e) => {
       e.preventDefault();
-      Axios.defaults.withCredentials=true;
+       Axios.defaults.withCredentials=true;
       Axios.post(config.API_URL+'/auth/resetPassword/'+token, {
         password,
       }).then(response => {
