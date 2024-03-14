@@ -8,7 +8,7 @@ const Dashboard = () => {
   const navigate=useNavigate()
   const[Name,setName]=useState('')
   const[Appemail,setAppemail]=useState('')
-  axios.defaults.withCredentials=true;
+  // axios.defaults.withCredentials=true;
   useEffect(()=>{
       axios.get(config.API_URL+'/auth/Dashboard')
       .then(res=>{
