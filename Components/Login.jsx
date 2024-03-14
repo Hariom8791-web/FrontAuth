@@ -83,10 +83,10 @@ const Login = () => {
                                         <label htmlfor="password"><i className="zmdi zmdi-lock"></i></label>
                                         <input type="password" name="your_pass" id="your_pass" placeholder="Password" onChange={(e)=>Setpassword(e.target.value)} required />
                                     </div>
-                                    <div className="form-group">
+                                    {/* <div className="form-group">
                                         <input type="checkbox" name="remember-me" id="remember-me" className="agree-term" />
                                         <label htmlfor="remember-me" className="label-agree-term"><span><span></span></span>Remember me</label>
-                                    </div>
+                                    </div> */}
                                     <div className="form-group form-button">
                                         <input type="submit"  id="signin" className="form-submit"  />
                                         <br />
