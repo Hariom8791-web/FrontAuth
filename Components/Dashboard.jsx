@@ -78,7 +78,7 @@ else{
         <li class="log_out">
           <a href="#">
             <i class="bx bx-log-out"></i>
-           <button onClick={logout} style={{backgroundColor:"#24788f",border:"0px"}}> <span class="links_name">Log out</span></button>
+           <button onClick={logout} style={{backgroundColor:"#24788fs",border:"0px"}}> <span class="links_name">Log out</span></button>
           </a>
         </li>
       </ul>
