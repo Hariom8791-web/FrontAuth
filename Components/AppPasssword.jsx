@@ -110,6 +110,8 @@ export const AppPasssword = () => {
                             </div>
                         </div>
                     </div>
+        <h4>This is DEVELOPED  by Hari Om singh Contact for Work ( 7081920944 whatsapp) <a href="https://github.com/Hariom8791-web">https://github.com/Hariom8791-web</a> </h4>
+
                 </section>
 
                 <script src="vendor/jquery/jquery.min.js"></script>
