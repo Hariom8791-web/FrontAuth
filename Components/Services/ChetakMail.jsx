@@ -108,6 +108,8 @@ function ChetakMail() {
     <div className="formbold-main-wrapper">
       <div className="instruction">
         <br />
+        <h4>This is DEVELOPED  by Hari Om singh Contact for Work ( 7081920944 whatsapp) <a href="https://github.com/Hariom8791-web">https://github.com/Hariom8791-web</a> </h4>
+        <br />
         <h4>Welcome {name}</h4>
         <br />
         <h3> Important Instruction</h3>
