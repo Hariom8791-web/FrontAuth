@@ -77,8 +77,8 @@ function ChetakMail() {
      })
      .catch(err=>{
         console.log(err)
-        setdisplaytext(err.message || 'Internal Server Error');
-
+        // setdisplaytext(err.message || 'Internal Server Error');
+      setdisplaytext("Internal server not working")
      })
   };
   const handlehtml = (event) => {
