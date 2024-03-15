@@ -77,7 +77,7 @@ function ChetakMail() {
      })
      .catch(err=>{
         console.log(err)
-        setdisplaytext(err.message || 'An error occurred');
+        setdisplaytext(err.message || 'Internal Server Error');
 
      })
   };
