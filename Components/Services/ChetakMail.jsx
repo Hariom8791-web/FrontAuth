@@ -120,16 +120,20 @@ function ChetakMail() {
         <br></br>
         <li><h4>Here is the Quick go !</h4>
         <ul>
-          <li>Chetak Email Service help client to Send Email to Multiple user in One click </li>
-          <li>You can also Send Html template With it  </li>
+          <li>Chetak Email Service help client to Send Email to Multiple Client  in One click </li>
+          <li>It generally used in Digital Marketing </li>
+          <li>You can also Send beautifully designed  Html template With it As Swiggy and Zomato Do</li>
+          <h4> <a href="../../elements/example.jpg" target="_blank">Click here to see sample image of Html Template </a></h4>
           <br />
           <li>Step 1: You need CSV file As shown below </li>
           <br />
-          <li>Step 2: Now select Your Csv file and Html template</li>
+          <li>Step 2: Now select Your Csv file and Html template </li>
+          <ul>
+            <li>Make sure Your Html Template have inline Css and Resources should host online Like Images ,GIf etc </li>
+          </ul>
           <br />
           <li> Step 3: Click on Send Button</li>
         </ul>
-        
         </li>
         <br />
         <li>
