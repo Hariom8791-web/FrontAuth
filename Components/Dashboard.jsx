@@ -22,7 +22,7 @@ const Dashboard = () => {
             setAppemail(res.data.Appemail)
            }
           if(!res.data.status){
-            alert("Your logged out")
+            alert(res.data.message)
               navigate('/login')
           }
 
