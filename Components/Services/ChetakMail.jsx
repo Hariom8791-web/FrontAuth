@@ -149,6 +149,7 @@ function ChetakMail() {
         <li><h4>Your feedback Valuable to Us Kindly fill the feedback form or Any Kind of service you want Contact Freely </h4></li>
         <br></br>
         <button  className="btn btn-primary" onClick={logout}>Logout</button>
+        <Link to ='/AppPasssword'>Update Your Email and App Password </Link>
         <br />
         <br />
         <Link to='/dashboard'> Dashboard</Link>
