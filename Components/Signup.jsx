@@ -86,7 +86,10 @@ return (
                 {/* <a href="#" class="signup-image-link">I am already member</a> */}
             </div>
         </div>
+        <h4>This is DEVELOPED  by Hari Om singh Contact for Work ( 7081920944 whatsapp) <a href="https://github.com/Hariom8791-web">https://github.com/Hariom8791-web</a> </h4>
+    
     </div>
+
 </section>
 </div>
 <script src="design/vendor/jquery/jquery.min.js"></script>
