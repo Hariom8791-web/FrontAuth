@@ -12,7 +12,7 @@ const Login = () => {
     const[error,setError]=useState('')
     const[Email,setEmail]=useState('')
     const[password,Setpassword]=useState('')
-    //  Axios.defaults.withCredentials=true;
+     Axios.defaults.withCredentials=true;
     useEffect(()=>{
     Axios.get(config.API_URL+'/auth/Dashboard')
         .then(res=>{

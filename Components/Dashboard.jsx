@@ -8,9 +8,9 @@ const Dashboard = () => {
   const navigate=useNavigate()
   const[Name,setName]=useState('')
   const[Appemail,setAppemail]=useState('')
-  //  axios.defaults.withCredentials=true;
+   axios.defaults.withCredentials=true;
   useEffect(()=>{
-    //  axios.defaults.withCredentials=true;
+     axios.defaults.withCredentials=true;
       axios.get(config.API_URL+'/auth/Dashboard')
       
 
@@ -22,7 +22,7 @@ const Dashboard = () => {
             setAppemail(res.data.Appemail)
            }
           if(!res.data.status){
-            alert(res.data.message)
+            alert("Your logged out")
               navigate('/login')
           }
 
