@@ -107,7 +107,7 @@ else{
             </div>
             <i class="bx bx-envelope mail"></i>
           </div>  
-          <button onClick={logout} style={{backgroundColor:"#24788f",border:"0px"}}> <span class="links_name">Log out</span></button>
+          <button onClick={logout} > <span class="links_name">Log out</span></button>
           <br />
           <button><a href="https://gulal-revolution.vercel.app">Home</a></button>
         </div>

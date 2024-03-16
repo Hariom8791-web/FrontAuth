@@ -14,7 +14,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 function ChetakMail() {
     const navigate=useNavigate();
     axios.defaults.withCredentials=true;
-  const[displaytext,setdisplaytext]=useState('This service only avaible when my own server is runnig because vercel on free plan do not allow to response time exceeds more than 10 sec but as number emails increased its time also increase >> Contact  7081920944 (whatsapp)for Membership and Sale ')
+  const[displaytext,setdisplaytext]=useState('This service only avaible when my own server is runnig because vercel on free plan do not allow to response time exceeds more than 10 sec but as number emails increased its time also increase >> Contact  7081920944 (whatsapp)for Membership ,Sale and Offcourse for DEMO !')
   const [emails, setEmails]=useState([]);
   const[textmsg,setTextmsg]=useState('');
   const[subject,setSubject]=useState('');
@@ -153,6 +153,8 @@ function ChetakMail() {
         <li><h4>Your feedback Valuable to Us Kindly fill the feedback form or Any Kind of service you want Contact Freely </h4></li>
         <br></br>
         <button  className="btn btn-primary" onClick={logout}>Logout</button>
+        <br />
+        <br />
         <Link to ='/AppPasssword'>Update Your Email and App Password </Link>
         <br />
         <br />
