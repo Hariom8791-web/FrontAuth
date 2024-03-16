@@ -78,7 +78,7 @@ return (
                     <div class="form-group form-button">
                         <button type="submit" name="signup" id="signup" class="form-submit" >Submit</button>
                     </div>
-                    <button className="form-submit"><a href="https://gulal-revolution.vercel.app">Home</a></button>
+                    <button className="form-submit" style={{ color: "white", textDecoration: "none" }}><a href="https://gulal-revolution.vercel.app">Home</a></button>
                 </form>
             </div>
             <div class="signup-image">
