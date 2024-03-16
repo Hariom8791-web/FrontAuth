@@ -94,8 +94,9 @@ const Login = () => {
                                         <Link to='/Forgotpassword'>Forgot Password ?</Link>
                                         <br />
                                         <br />
-                                        <button><a href="https://gulal-revolution.vercel.app">Home</a></button>
+                                        
                                     </div>
+                                    <button className="form-submit"><a href="https://gulal-revolution.vercel.app">Home</a></button>
                                 </form>
                                 {/* <div className="social-login">
                                     <span className="social-label">Or login with</span>
