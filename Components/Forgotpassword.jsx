@@ -51,6 +51,8 @@ const Forgotpassword = () => {
                 </div>
                 <div className='login'>
                     <p> Have an account </p><Link to="/Login">Login</Link>
+                    <br />
+                    <button><a href="https://gulal-revolution.vercel.app">Home</a></button>
                 </div>
             </form>
 

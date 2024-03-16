@@ -83,6 +83,8 @@ return (
             <div class="signup-image">
                 <figure><img src={singupImage} alt="sing up image"/></figure>
                 <Link to="/Login" class="signup-image-link">I am already member</Link>
+                <br />
+                <button><a href="https://gulal-revolution.vercel.app">Home</a></button>
                 {/* <a href="#" class="signup-image-link">I am already member</a> */}
             </div>
         </div>

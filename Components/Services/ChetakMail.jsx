@@ -64,7 +64,7 @@ function ChetakMail() {
     console.log(htmlFile)
      // axios.post(config.API_URL+'/auth/ChetakMail', { emails,textmsg,subject,htmlFile,name})
      axios.post('https://6c78-2a09-bac1-36e0-1d0-00-47-49e.ngrok-free.app/Service/Chetak', { emails,textmsg,subject,htmlFile,name})
-     .then(res =>{
+     .then(res =>{ 
         console.log(res.data.message)
         if(res.data.status){
             setdisplaytext("All Mails Sent Successfully")

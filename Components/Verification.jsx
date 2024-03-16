@@ -54,6 +54,8 @@ export const Verification = () => {
                             <br></br>
                             {/* <a href="#" class="signup-image-link" type='submit'>Verify </a> */}
                             <button class="signup-image-link" type='submit'>verify</button>
+                            <br />
+                            <button><a href="https://gulal-revolution.vercel.app">Home</a></button>
                         </div>
                     </form>
                     {/* <div class="social-login">
