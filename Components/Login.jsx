@@ -92,6 +92,8 @@ const Login = () => {
                                         <br />
                                         <br />
                                         <Link to='/Forgotpassword'>Forgot Password ?</Link>
+                                        <br />
+                                        <br />
                                         <button><a href="https://gulal-revolution.vercel.app">Home</a></button>
                                     </div>
                                 </form>

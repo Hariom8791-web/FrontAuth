@@ -99,7 +99,7 @@ export const AppPasssword = () => {
                                     <br />
                                     <Link to ='/dashboard' ><h4>Back to Dashboard</h4> </Link>
                                     <br />
-                                    <button><a href="https://gulal-revolution.vercel.app">Home</a></button><button><a href="https://gulal-revolution.vercel.app">Home</a></button>
+                                    <button className="form-submit"><a href="https://gulal-revolution.vercel.app">Home</a></button><button><a href="https://gulal-revolution.vercel.app">Home</a></button>
                                 </form>
                                 {/* <div class="social-login">
                                     <span class="social-label">Or login with</span>
