@@ -50,6 +50,8 @@ const Resetpassword = () => {
                 </div>
                 <div className='login'>
                     <p> Have An Account </p><Link to="/Login">LOGIN HERE</Link>
+                    <br />
+                    <button><a href="https://gulal-revolution.vercel.app">Home</a></button>
                 </div>
             </form>
 
