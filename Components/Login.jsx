@@ -108,7 +108,7 @@ const Login = () => {
                                 </div> */}
                             </div>
                         </div>
-        <h4>This is DEVELOPED  by Hari Om singh Contact for Work ( 7081920944 whatsapp) <a href="https://github.com/Hariom8791-web">https://github.com/Hariom8791-web</a> </h4>
+        <h4>This PROJECT DEVELOPED  by Hari Om singh Contact for Work ( https://wa.me//7599028269) <a href="https://github.com/Hariom8791-web">https://github.com/Hariom8791-web</a> </h4>
 
                     </div>
                 </section>
