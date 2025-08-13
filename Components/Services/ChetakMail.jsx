@@ -59,29 +59,58 @@ function ChetakMail() {
   
     },[])
  
-  const handleSendEmails = () => {
-    setdisplaytext("We are Sending Your Emails >> Do not Reload page")
-    console.log(htmlFile)
-     // axios.post(config.API_URL+'/auth/ChetakMail', { emails,textmsg,subject,htmlFile,name})
-      //https://806b-2401-4900-1f30-1056-8001-afd2-5b7b-666.ngrok-free.app/Service/Chetak',
-     axios.post(config.API_URL + '/auth/ChetakMail', { emails,textmsg,subject,htmlFile,name})
-     .then(res =>{ 
-        console.log(res.data.message)
-        if(res.data.status){
-            setdisplaytext("All Mails Sent Successfully")
-            window.open('https://docs.google.com/forms/d/e/1FAIpQLSeb50p6jiZKTfeNBhatuB91tlLY30DlinRd_drNv0hIjxdYTQ/viewform?usp=sf_link', '_blank');
-        }
-       else{
-        setdisplaytext(res.data.message)
-       }
+  // const handleSendEmails = () => {
+  //   setdisplaytext("We are Sending Your Emails >> Do not Reload page")
+  //   console.log(htmlFile)
+  //    // axios.post(config.API_URL+'/auth/ChetakMail', { emails,textmsg,subject,htmlFile,name})
+  //     //https://806b-2401-4900-1f30-1056-8001-afd2-5b7b-666.ngrok-free.app/Service/Chetak',
+  //    axios.post(config.API_URL + '/auth/ChetakMail', { emails,textmsg,subject,htmlFile,name})
+  //    .then(res =>{ 
+  //       console.log(res.data.message)
+  //       if(res.data.status){
+  //           setdisplaytext("All Mails Sent Successfully")
+  //           window.open('https://docs.google.com/forms/d/e/1FAIpQLSeb50p6jiZKTfeNBhatuB91tlLY30DlinRd_drNv0hIjxdYTQ/viewform?usp=sf_link', '_blank');
+  //       }
+  //      else{
+  //       setdisplaytext(res.data.message)
+  //      }
       
-     })
-     .catch(err=>{
-        console.log(err)
-        // setdisplaytext(err.message || 'Internal Server Error');
-      setdisplaytext("Internal server not working")
-     })
-  };
+  //    })
+  //    .catch(err=>{
+  //       console.log(err)
+  //       // setdisplaytext(err.message || 'Internal Server Error');
+  //     setdisplaytext("Internal server not working")
+  //    })
+  // };
+    const handleSendEmails = () => {
+  setdisplaytext("We are Sending Your Emails >> Do not Reload page");
+  console.log("HTML File:", htmlFile);
+
+  axios.post(`${config.API_URL}/auth/ChetakMail`, { 
+    emails, 
+    textmsg, 
+    subject, 
+    htmlFile, 
+    name 
+  })
+  .then(res => { 
+    console.log("Server Response:", res.data.message);
+    if (res.data.status) {
+      setdisplaytext("All Mails Sent Successfully");
+      window.open(
+        'https://docs.google.com/forms/d/e/1FAIpQLSeb50p6jiZKTfeNBhatuB91tlLY30DlinRd_drNv0hIjxdYTQ/viewform?usp=sf_link',
+        '_blank'
+      );
+    } else {
+      setdisplaytext(res.data.message || "Email sending failed");
+    }
+  })
+  .catch(err => {
+    console.error("Error in sending email:", err);
+    setdisplaytext(err.message || "Internal Server Error");
+  });
+};
+
   const handlehtml = (event) => {
     const file = event.target.files[0];
     const reader = new FileReader();
