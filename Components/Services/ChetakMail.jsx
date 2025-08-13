@@ -63,7 +63,8 @@ function ChetakMail() {
     setdisplaytext("We are Sending Your Emails >> Do not Reload page")
     console.log(htmlFile)
      // axios.post(config.API_URL+'/auth/ChetakMail', { emails,textmsg,subject,htmlFile,name})
-     axios.post('https://806b-2401-4900-1f30-1056-8001-afd2-5b7b-666.ngrok-free.app/Service/Chetak', { emails,textmsg,subject,htmlFile,name})
+      //https://806b-2401-4900-1f30-1056-8001-afd2-5b7b-666.ngrok-free.app/Service/Chetak',
+     axios.post('config.API_URL+'/auth/ChetakMail', { emails,textmsg,subject,htmlFile,name})
      .then(res =>{ 
         console.log(res.data.message)
         if(res.data.status){
