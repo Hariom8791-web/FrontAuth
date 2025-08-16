@@ -3,14 +3,15 @@ import Papa from 'papaparse';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import config from '../Config.json';
-import { FiChevronDown, FiChevronUp, FiX, FiMail, FiFileText, FiHelpCircle, FiLogOut, FiHome, FiSettings } from 'react-icons/fi';
+import { FiX, FiMail, FiFileText, FiHelpCircle, FiLogOut, FiHome, FiSettings, FiSend } from 'react-icons/fi';
+import { FaFileCsv, FaFileCode } from 'react-icons/fa';
 import './ChetakMail.css';
 
 function ChetakMail() {
   const navigate = useNavigate();
   axios.defaults.withCredentials = true;
   
-  const [displaytext, setdisplaytext] = useState('This service is available when our server is running. Contact 7081920944 (WhatsApp) for Membership, Sales, and DEMO!');
+  const [statusMessage, setStatusMessage] = useState('Ready to send emails');
   const [emails, setEmails] = useState([]);
   const [textmsg, setTextmsg] = useState('');
   const [subject, setSubject] = useState('');
@@ -22,19 +23,31 @@ function ChetakMail() {
 
   const handleFileUpload = (event) => {
     const file = event.target.files[0];
+    if (!file) return;
+    
+    setStatusMessage('Processing CSV file...');
+    
     Papa.parse(file, {
       complete: (result) => {
         if (result.data && result.data.length > 0) {
-          const extractedEmails = result.data.map(row => row[0]).filter(email => email);
-          setEmails(extractedEmails);
-          setEmailCount(extractedEmails.length);
+          const extractedEmails = result.data
+            .map(row => row[0]?.trim())
+            .filter(email => email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+          
+          if (extractedEmails.length > 0) {
+            setEmails(extractedEmails);
+            setEmailCount(extractedEmails.length);
+            setStatusMessage(`Loaded ${extractedEmails.length} valid emails`);
+          } else {
+            setStatusMessage('No valid emails found in CSV');
+          }
         } else {
-          setdisplaytext('CSV file is empty or invalid');
+          setStatusMessage('CSV file is empty or invalid');
         }
       },
       header: false,
       error: (error) => {
-        setdisplaytext('Error parsing CSV file');
+        setStatusMessage('Error parsing CSV file');
         console.error('CSV parsing error:', error);
       }
     });
@@ -44,7 +57,7 @@ function ChetakMail() {
     axios.get(config.API_URL + '/auth/Dashboard')
       .then(res => {
         if (!res.data.status) {
-          alert("You are logged out");
+          alert("Session expired - please login again");
           navigate('/login');
         } else {
           setName(res.data.username);
@@ -52,53 +65,58 @@ function ChetakMail() {
       })
       .catch(err => {
         console.log(err);
-        setdisplaytext('Error verifying session');
+        setStatusMessage('Error verifying your session');
       });
   }, [navigate]);
 
-  const handleSendEmails = () => {
+  const handleSendEmails = async () => {
     if (emails.length === 0) {
-      setdisplaytext('Please upload a CSV file with email addresses');
+      setStatusMessage('Please upload a CSV file with valid email addresses');
       return;
     }
     
     setIsSending(true);
-    setdisplaytext(`Sending ${emailCount} emails... Please wait`);
+    setStatusMessage(`Sending ${emailCount} emails... Please wait`);
 
-    axios.post(`${config.API_URL}/auth/ChetakMail`, { 
-      emails, 
-      textmsg, 
-      subject, 
-      htmlFile, 
-      name 
-    })
-    .then(res => { 
-      console.log("Server Response:", res.data);
-      if (res.data.status) {
-        setdisplaytext(`Success! ${emailCount} emails sent`);
+    try {
+      const response = await axios.post(`${config.API_URL}/auth/ChetakMail`, { 
+        emails, 
+        textmsg, 
+        subject, 
+        htmlFile, 
+        name 
+      });
+      
+      console.log("Server Response:", response.data);
+      if (response.data.status) {
+        setStatusMessage(`Success! ${emailCount} emails sent`);
         window.open(
           'https://docs.google.com/forms/d/e/1FAIpQLSeb50p6jiZKTfeNBhatuB91tlLY30DlinRd_drNv0hIjxdYTQ/viewform?usp=sf_link',
           '_blank'
         );
       } else {
-        setdisplaytext(res.data.message || "Email sending failed");
+        setStatusMessage(response.data.message || "Email sending failed");
       }
-      setIsSending(false);
-    })
-    .catch(err => {
+    } catch (err) {
       console.error("Error:", err);
-      setdisplaytext(err.response?.data?.message || "Error sending emails");
+      setStatusMessage(err.response?.data?.message || "Error sending emails");
+    } finally {
       setIsSending(false);
-    });
+    }
   };
 
   const handleHtmlUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
     
+    setStatusMessage('Processing HTML template...');
+    
     const reader = new FileReader();
-    reader.onload = () => setHtmlFile(reader.result);
-    reader.onerror = () => setdisplaytext('Error reading HTML file');
+    reader.onload = () => {
+      setHtmlFile(reader.result);
+      setStatusMessage('HTML template loaded successfully');
+    };
+    reader.onerror = () => setStatusMessage('Error reading HTML file');
     reader.readAsText(file);
   };
 
@@ -110,10 +128,11 @@ function ChetakMail() {
 
   return (
     <div className="chetak-container">
-      {/* Sidebar */}
+      {/* Navigation Sidebar */}
       <div className="sidebar">
         <div className="sidebar-header">
-          <h3>Chetak Mail</h3>
+          <h2>Chetak Mail</h2>
+          <p className="welcome">Welcome, {name}</p>
         </div>
         <nav>
           <Link to="/dashboard" className="sidebar-link">
@@ -122,145 +141,94 @@ function ChetakMail() {
           <Link to="/AppPasssword" className="sidebar-link">
             <FiSettings className="icon" /> Email Settings
           </Link>
+          <button 
+            onClick={() => setShowInstructions(true)} 
+            className="sidebar-link"
+          >
+            <FiHelpCircle className="icon" /> Instructions
+          </button>
           <button onClick={logout} className="sidebar-link logout-btn">
             <FiLogOut className="icon" /> Logout
           </button>
         </nav>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <main className="main-content">
-        <div className="header">
-          <h1>Welcome, {name}</h1>
-          <button 
-            onClick={() => setShowInstructions(!showInstructions)} 
-            className="instruction-toggle"
-          >
-            {showInstructions ? <FiChevronUp /> : <FiChevronDown />} 
-            {showInstructions ? 'Hide Instructions' : 'Show Instructions'}
-          </button>
+        <div className="email-service-header">
+          <h1>
+            <FiMail className="header-icon" /> 
+            Chetak Email Service
+          </h1>
+          <p className="subheader">Send bulk emails with HTML templates</p>
         </div>
 
-        {/* Instruction Panel */}
-        {showInstructions && (
-          <div className="instruction-panel">
-            <button 
-              className="close-btn" 
-              onClick={() => setShowInstructions(false)}
-            >
-              <FiX />
-            </button>
-            <h2><FiHelpCircle className="icon" /> How to Use Chetak Mail</h2>
-            
-            <div className="video-container">
-              <h3>Watch the Tutorial Video</h3>
-              <div className="video-placeholder">
-                [Video Embed Placeholder]
-                <p>Coming soon - video tutorial</p>
-              </div>
-            </div>
-
-            <div className="quick-guide">
-              <h3>Quick Guide</h3>
-              <ul>
-                <li><strong>Chetak Email Service</strong> lets you send emails to multiple recipients with one click</li>
-                <li>Perfect for <strong>digital marketing campaigns</strong></li>
-                <li>Supports beautiful <strong>HTML templates</strong> (like Swiggy/Zomato)</li>
-              </ul>
-            </div>
-
-            <div className="step-by-step">
-              <h3>Step-by-Step Instructions</h3>
-              <ol>
-                <li>
-                  <strong>Prepare your CSV file:</strong>
-                  <ul>
-                    <li>Single column with email addresses only</li>
-                    <li>No headers, extra spaces, or symbols</li>
-                    <a href="../../elements/example.jpg" target="_blank" rel="noopener noreferrer">
-                      View CSV sample
-                    </a>
-                  </ul>
-                </li>
-                <li>
-                  <strong>Prepare your HTML template:</strong>
-                  <ul>
-                    <li>Use inline CSS only</li>
-                    <li>Host all resources (images, GIFs) online</li>
-                    <a href="../../elements/sample.html" target="_blank" rel="noopener noreferrer">
-                      View HTML sample
-                    </a>
-                  </ul>
-                </li>
-                <li>
-                  <strong>Enable HTML in your Gmail account settings</strong>
-                </li>
-                <li>
-                  <strong>Upload files and send!</strong>
-                </li>
-              </ol>
-            </div>
-
-            <div className="support-section">
-              <h3>Need Help?</h3>
-              <p>Contact us for assistance:</p>
-              <div className="contact-options">
-                <a href="https://wa.me/7599028269" target="_blank" rel="noopener noreferrer">
-                  WhatsApp: 7599028269
-                </a>
-                <a href="https://github.com/Hariom8791-web" target="_blank" rel="noopener noreferrer">
-                  GitHub: Hariom8791-web
-                </a>
-                <a href="https://docs.google.com/forms/d/e/1FAIpQLSeb50p6jiZKTfeNBhatuB91tlLY30DlinRd_drNv0hIjxdYTQ/viewform" 
-                  target="_blank" rel="noopener noreferrer">
-                  Feedback Form
-                </a>
-              </div>
-            </div>
+        {/* Status Bar */}
+        <div className={`status-bar ${isSending ? 'sending' : ''}`}>
+          <div className="status-content">
+            <span className="status-message">{statusMessage}</span>
+            {emailCount > 0 && (
+              <span className="email-count">
+                {emailCount} {emailCount === 1 ? 'email' : 'emails'} ready
+              </span>
+            )}
           </div>
-        )}
+        </div>
 
         {/* Email Form */}
         <div className="email-form">
-          <div className="status-message">
-            {displaytext}
-            {emailCount > 0 && (
-              <span className="email-count">Emails to send: {emailCount}</span>
-            )}
+          <div className="form-section">
+            <h3 className="section-title">
+              <FaFileCsv className="section-icon" />
+              Email List
+            </h3>
+            <div className="file-upload">
+              <label className="file-upload-label">
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={handleFileUpload}
+                  className="file-input"
+                  required
+                />
+                <span className="file-upload-button">Choose CSV File</span>
+                <span className="file-upload-text">
+                  {emailCount > 0 ? `${emailCount} emails loaded` : 'No file selected'}
+                </span>
+              </label>
+              <p className="file-hint">Single column with email addresses only</p>
+            </div>
           </div>
 
-          <div className="form-grid">
-            <div className="form-group">
-              <label>
-                <FiFileText className="icon" /> CSV File (Email List)
+          <div className="form-section">
+            <h3 className="section-title">
+              <FaFileCode className="section-icon" />
+              HTML Template (Optional)
+            </h3>
+            <div className="file-upload">
+              <label className="file-upload-label">
+                <input
+                  type="file"
+                  accept=".html"
+                  onChange={handleHtmlUpload}
+                  className="file-input"
+                />
+                <span className="file-upload-button">Choose HTML File</span>
+                <span className="file-upload-text">
+                  {htmlFile ? 'Template loaded' : 'No template selected'}
+                </span>
               </label>
-              <input
-                type="file"
-                accept=".csv"
-                onChange={handleFileUpload}
-                className="file-input"
-                required
-              />
-              <p className="hint">Single column with email addresses only</p>
+              <p className="file-hint">Use inline CSS and hosted resources</p>
             </div>
+          </div>
 
-            <div className="form-group">
-              <label>
-                <FiFileText className="icon" /> HTML Template (Optional)
-              </label>
-              <input
-                type="file"
-                accept=".html"
-                onChange={handleHtmlUpload}
-                className="file-input"
-              />
-              <p className="hint">Use inline CSS and hosted resources</p>
-            </div>
-
-            <div className="form-group full-width">
-              <label>
-                <FiMail className="icon" /> Email Subject
-              </label>
+          <div className="form-section">
+            <h3 className="section-title">
+              <FiMail className="section-icon" />
+              Email Content
+            </h3>
+            <div className="input-group">
+              <label>Subject Line</label>
               <input
                 type="text"
                 placeholder="Enter your subject line"
@@ -270,31 +238,107 @@ function ChetakMail() {
                 required
               />
             </div>
-
-            <div className="form-group full-width">
-              <label>
-                <FiMail className="icon" /> Email Body
-              </label>
+            <div className="input-group">
+              <label>Plain Text Version</label>
               <textarea
-                placeholder="Enter your message (plain text)"
+                placeholder="Enter your message (will be used if no HTML template)"
                 value={textmsg}
                 onChange={(e) => setTextmsg(e.target.value)}
                 className="text-area"
                 rows="5"
               />
-              <p className="hint">This will be used if no HTML template is provided</p>
             </div>
           </div>
 
           <button 
             onClick={handleSendEmails}
-            className="send-btn"
-            disabled={isSending}
+            className="send-button"
+            disabled={isSending || emailCount === 0}
           >
+            <FiSend className="button-icon" />
             {isSending ? 'Sending...' : 'Send Emails'}
           </button>
         </div>
       </main>
+
+      {/* Instructions Modal */}
+      {showInstructions && (
+        <div className="modal-overlay">
+          <div className="instruction-modal">
+            <div className="modal-header">
+              <h2>
+                <FiHelpCircle className="modal-icon" />
+                Chetak Mail Instructions
+              </h2>
+              <button 
+                className="close-modal"
+                onClick={() => setShowInstructions(false)}
+              >
+                <FiX />
+              </button>
+            </div>
+            
+            <div className="modal-content">
+              <div className="instruction-section">
+                <h3>Getting Started</h3>
+                <p>
+                  Chetak Mail allows you to send bulk emails with optional HTML templates.
+                  Follow these steps to use the service:
+                </p>
+                <ol className="steps-list">
+                  <li>
+                    <strong>Prepare your email list</strong> as a CSV file with one email address per line
+                    <div className="example-image">
+                      <img src="../../elements/example.jpg" alt="CSV example" />
+                    </div>
+                  </li>
+                  <li>
+                    <strong>Create your HTML template</strong> (if desired) with inline CSS
+                    <div className="example-image">
+                      <img src="../../elements/sample.html" alt="HTML example" />
+                    </div>
+                  </li>
+                  <li>
+                    <strong>Upload your files</strong> using the form
+                  </li>
+                  <li>
+                    <strong>Enter your subject line</strong> and plain text version
+                  </li>
+                  <li>
+                    <strong>Click "Send Emails"</strong> to deliver your campaign
+                  </li>
+                </ol>
+              </div>
+
+              <div className="instruction-section tips-section">
+                <h3>Pro Tips</h3>
+                <ul>
+                  <li>Test with a small list first before sending to all recipients</li>
+                  <li>Keep your HTML file under 100KB for best performance</li>
+                  <li>Use email validation services to clean your list first</li>
+                  <li>Enable HTML emails in your Gmail account settings</li>
+                </ul>
+              </div>
+
+              <div className="instruction-section support-section">
+                <h3>Need Help?</h3>
+                <p>Contact our support team for assistance:</p>
+                <div className="contact-methods">
+                  <a href="https://wa.me/7599028269" target="_blank" rel="noopener noreferrer">
+                    WhatsApp: +91 7599028269
+                  </a>
+                  <a href="mailto:support@chetakmail.com">
+                    Email: support@chetakmail.com
+                  </a>
+                  <a href="https://github.com/Hariom8791-web" target="_blank" rel="noopener noreferrer">
+                    GitHub Issues
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
