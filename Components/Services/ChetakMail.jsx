@@ -1,245 +1,274 @@
-import React, { useState, useEffect } from 'react';
-import { FiX, FiMail, FiFileText, FiHelpCircle, FiSend } from 'react-icons/fi';
-import { FaFileCsv, FaFileCode } from 'react-icons/fa';
-import Papa from 'papaparse';
+import React, { useEffect, useState } from 'react';
+import Papa from 'papaparse'; // A CSV parsing library
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
-import './ChetakMail.css';
+import './ChetakMail.css'
+import { Link } from 'react-router-dom';
+import Sample from './elements/Sample.jsx'
+import config from '../Config.json';
 
-const ChetakMail = () => {
-  const navigate = useNavigate();
-  const [state, setState] = useState({
-    emails: [],
-    textmsg: '',
-    subject: '',
-    htmlFile: null,
-    name: '',
-    emailCount: 0,
-    isSending: false,
-    status: 'Ready to send emails'
-  });
+import { Navigate, useNavigate } from 'react-router-dom';
 
-  const [showInstructions, setShowInstructions] = useState(false);
-
-  // Toggle instruction modal with animation
-  const toggleInstructions = () => {
-    document.body.style.overflow = showInstructions ? 'auto' : 'hidden';
-    setShowInstructions(!showInstructions);
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setState(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setState(prev => ({ ...prev, status: 'Processing CSV...' }));
-
+function ChetakMail() {
+    const navigate=useNavigate();
+    axios.defaults.withCredentials=true;
+  const[displaytext,setdisplaytext]=useState('This service only avaible when my own server is runnig because vercel on free plan do not allow to response time exceeds more than 10 sec but as number emails increased its time also increase >> Contact  7081920944 (whatsapp)for Membership ,Sale and Offcourse for DEMO !')
+  const [emails, setEmails]=useState([]);
+  const[textmsg,setTextmsg]=useState('');
+  const[subject,setSubject]=useState('');
+  const [htmlFile, setHtmlFile] = useState(null);
+  const[name,setName]=useState('')
+  const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const [errors, setErrors] = useState([]);
+  
+  const handleFileUpload = async (event) => {
+    
+    const file = event.target.files[0];
+    
+    // Parse CSV file
     Papa.parse(file, {
       complete: (result) => {
-        const validEmails = result.data
-          .flatMap(row => row[0]?.trim())
-          .filter(email => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
-
-        if (validEmails.length) {
-          setState(prev => ({
-            ...prev,
-            emails: validEmails,
-            emailCount: validEmails.length,
-            status: `Loaded ${validEmails.length} valid emails`
-          }));
+        if (result.data && result.data.length > 0) { // Check if result.data exists and has elements
+          // Extract emails from CSV and store in an array
+          const extractedEmails = result.data.map(row => row[0]);
+          setEmails(extractedEmails);
         } else {
-          setState(prev => ({ ...prev, status: 'No valid emails found' }));
+          console.error('CSV file is empty or invalid');
+          // Handle the case where CSV file is empty or invalid
         }
       },
-      error: () => {
-        setState(prev => ({ ...prev, status: 'CSV parsing failed' }));
+      header: false,
+    });
+  };
+  useEffect(()=>{
+    axios.get(config.API_URL+'/auth/Dashboard')
+        .then(res=>{
+            console.log(res)
+            if(!res.data.status){
+              alert("You are log out ")
+                navigate('/login')
+            }
+            else{
+                setName(res.data.username)
+                navigate('/ChetakMail')
+            }
+        })
+        .catch(err=>console.log(err))
+  
+    },[])
+ 
+  const handleSendEmails = () => {
+    setdisplaytext("We are Sending Your Emails >> Do not Reload page");
+    setProgress({ current: 0, total: emails.length });
+    setErrors([]);
+    
+    // Using fetch instead of axios to handle streaming response
+    fetch(config.API_URL+'/auth/ChetakMail', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      header: false
+      credentials: 'include',
+      body: JSON.stringify({ emails, textmsg, subject, htmlFile, name })
+    })
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      // Create a reader to read the stream
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value);
+        // Split by double newline in case multiple chunks came together
+        const messages = chunk.split('\n\n').filter(msg => msg.trim());
+        
+        for (const msg of messages) {
+          try {
+            const data = JSON.parse(msg);
+            // Handle different statuses
+            if (data.status === 'progress') {
+              setProgress({ current: data.current, total: data.total });
+              setdisplaytext(`Sending ${data.current}/${data.total}: ${data.email}`);
+            } else if (data.status === 'error') {
+              setErrors(prev => [...prev, { email: data.email, message: data.message }]);
+            } else if (data.status === 'complete') {
+              setdisplaytext("All Mails Sent Successfully");
+              window.open('https://docs.google.com/forms/d/e/1FAIpQLSeb50p6jiZKTfeNBhatuB91tlLY30DlinRd_drNv0hIjxdYTQ/viewform?usp=sf_link', '_blank');
+            }
+          } catch (e) {
+            console.error('Error parsing chunk:', e);
+          }
+        }
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      setdisplaytext("Internal server not working");
     });
   };
 
-  const handleSendEmails = async () => {
-    if (!state.emailCount) {
-      setState(prev => ({ ...prev, status: 'No emails to send' }));
-      return;
-    }
-
-    setState(prev => ({ ...prev, isSending: true, status: `Sending ${state.emailCount} emails...` }));
-
-    try {
-      const response = await axios.post(`${config.API_URL}/auth/ChetakMail`, {
-        emails: state.emails,
-        textmsg: state.textmsg,
-        subject: state.subject,
-        htmlFile: state.htmlFile,
-        name: state.name
-      });
-
-      if (response.data.status) {
-        setState(prev => ({ ...prev, status: `Success! ${state.emailCount} emails sent` }));
-        window.open(FEEDBACK_FORM_URL, '_blank');
-      } else {
-        setState(prev => ({ ...prev, status: response.data.message || 'Sending failed' }));
-      }
-    } catch (err) {
-      setState(prev => ({ ...prev, status: err.response?.data?.message || 'Server error' }));
-    } finally {
-      setState(prev => ({ ...prev, isSending: false }));
-    }
+  const handlehtml = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = () => {
+      const fileContent = reader.result;
+      setHtmlFile(fileContent); // Set the file content in the state
+    };
+    
+    reader.readAsText(file); // Read the file as text
+  };
+  const logout = () => {
+    axios.post(config.API_URL+'/auth/logout')
+      .then((res) => {
+        if(res.status){
+          navigate('/login')
+        }
+      })
+      .catch(err => console.error('Logout error:', err));
   };
 
-  useEffect(() => {
-    axios.get(`${config.API_URL}/auth/Dashboard`)
-      .then(res => {
-        if (!res.data.status) navigate('/login');
-        else setState(prev => ({ ...prev, name: res.data.username }));
-      })
-      .catch(() => navigate('/login'));
-  }, [navigate]);
 
   return (
-    <div className="chetak-app">
-      {/* Main Interface */}
-      <div className="main-interface">
-        <header className="app-header">
-          <h1><FiMail /> Chetak Mail Service</h1>
-          <button onClick={toggleInstructions} className="help-btn">
-            <FiHelpCircle /> Instructions
-          </button>
-        </header>
+    
+    <div className="formbold-main-wrapper">
+      <div className="instruction">
+        <br />
+        <h4>This is DEVELOPED  by Hari Om singh Contact for Work ( 7081920944 whatsapp) <a href="https://github.com/Hariom8791-web">https://github.com/Hariom8791-web</a> </h4>
+        <br />
+        <h4>Welcome {name}</h4>
+        <br />
+        <h3> Important Instruction</h3>
+        <br></br>
+          <div className="instruction-list">
+          <ol>
+        <li><h4>Watch the Video To Know How this Work ? </h4></li>
+        <br></br>
+        <li><h4>Here is the Quick go !</h4>
+        <ul>
+          <li>Chetak Email Service help client to Send Email to Multiple Client  in One click </li>
+          <li>It generally used in Digital Marketing </li>
+          <li>You can also Send beautifully designed  Html template With it As Swiggy and Zomato Do</li>
+          <h4> <a href="../../elements/example.jpg" target="_blank">Click here to see sample image of Html Template </a></h4>
+          <br />
+          <li>Step 1: You need CSV file As shown below </li>
+          <br />
+          <li>Step 2: Now select Your Csv file and Html template </li>
+          <ul>
+            <li>Make sure Your Html Template have inline Css and Resources should host online Like Images ,GIf etc </li>
+          </ul>
+          <br />
+          <li> Step 3: Click on Send Button</li>
+        </ul>
+        </li>
+        <br />
+        <li>
+       <h4> <a href="../../elements/sample.html" target="_blank">Click here to see sample image of CSV file </a></h4>
+        <br />
+        </li>
+        <br></br>
+        <li><h4>Your Csv file  should not contain any single extra letter symbol, space and your csv file should exactly look like as shown in above image </h4></li>
+        <br></br>
+        <li><h4>For Sending Html template Make sure You have enable html template option  in your App Gmail Account  </h4></li>
+        <br></br>
+        <li><h4>Still you Face any Kind of Trouble feel free to Contact </h4>
+        
+        <h4><a href="https://docs.google.com/forms/d/e/1FAIpQLSeb50p6jiZKTfeNBhatuB91tlLY30DlinRd_drNv0hIjxdYTQ/viewform?usp=sf_link" target='_blank'>Contact google form </a></h4>
+        </li>
+        <br></br>
+        <li><h4>Your feedback Valuable to Us Kindly fill the feedback form or Any Kind of service you want Contact Freely </h4></li>
+        <br></br>
+        <button  className="btn btn-primary" onClick={logout}>Logout</button>
+        <br />
+        <br />
+        <Link to ='/AppPasssword'>Update Your Email and App Password </Link>
+        <br />
+        <br />
+        <Link to='/dashboard'> Dashboard</Link>
+    </ol>
 
-        <div className={`status-bar ${state.isSending ? 'sending' : ''}`}>
-          <span>{state.status}</span>
-          {state.emailCount > 0 && (
-            <span className="count-badge">{state.emailCount} emails</span>
-          )}
-        </div>
-
-        <div className="email-form">
-          <div className="form-section">
-            <label>
-              <FaFileCsv /> Email List (CSV)
-              <input type="file" accept=".csv" onChange={handleFileUpload} />
-            </label>
-            <p className="hint">Single column with email addresses only</p>
-          </div>
-
-          <div className="form-section">
-            <label>
-              <FaFileCode /> HTML Template (Optional)
-              <input type="file" accept=".html" onChange={handleHtmlUpload} />
-            </label>
-            <p className="hint">Use inline CSS with hosted resources</p>
-          </div>
-
-          <div className="form-section">
-            <label>Email Subject</label>
-            <input
-              type="text"
-              name="subject"
-              value={state.subject}
-              onChange={handleInputChange}
-              placeholder="Your email subject"
-            />
-          </div>
-
-          <div className="form-section">
-            <label>Plain Text Version</label>
-            <textarea
-              name="textmsg"
-              value={state.textmsg}
-              onChange={handleInputChange}
-              rows="5"
-              placeholder="Fallback text content"
-            />
-          </div>
-
-          <button
-            onClick={handleSendEmails}
-            disabled={state.isSending || !state.emailCount}
-            className="send-btn"
-          >
-            <FiSend /> {state.isSending ? 'Sending...' : 'Send Emails'}
-          </button>
-        </div>
+            </div>     
       </div>
-
-      {/* Instruction Modal */}
-      {showInstructions && (
-        <div className="modal-backdrop">
-          <div className="instruction-modal">
-            <div className="modal-header">
-              <h2><FiHelpCircle /> How to Use Chetak Mail</h2>
-              <button onClick={toggleInstructions} className="close-btn">
-                <FiX />
-              </button>
-            </div>
-
-            <div className="modal-content">
-              <InstructionStep 
-                number="1"
-                title="Prepare Your CSV File"
-                content="Create a single-column CSV with just email addresses"
-                image="csv-sample.jpg"
-              />
-              
-              <InstructionStep 
-                number="2"
-                title="Design HTML Template"
-                content="Use inline CSS and host all images externally"
-                image="html-sample.jpg"
-              />
-
-              <InstructionStep 
-                number="3"
-                title="Upload & Send"
-                content="Select your files, enter subject/text, then click send"
-              />
-
-              <div className="support-section">
-                <h3>Need Help?</h3>
-                <SupportContact 
-                  method="WhatsApp"
-                  details="+91 7599028269"
-                  link="https://wa.me/7599028269"
-                />
-                <SupportContact 
-                  method="Email"
-                  details="support@chetakmail.com"
-                  link="mailto:support@chetakmail.com"
-                />
-              </div>
-            </div>
-          </div>
+    <div className="formbold-form-wrapper">
+      <br></br>
+      <h2>Chetak  E-Mail  Services!</h2>
+      <br></br>
+      <h2>Fill the Credentials</h2>
+      <br></br>
+      <h5 id='warn'>{displaytext}</h5>
+      <div className="progress-container">
+        <progress value={progress.current} max={progress.total} />
+        <span>{progress.current}/{progress.total} emails sent</span>
+      </div>
+      {errors.length > 0 && (
+        <div className="error-container">
+          <h5>Errors occurred:</h5>
+          <ul>
+            {errors.map((error, index) => (
+              <li key={index}>{error.email}: {error.message}</li>
+            ))}
+          </ul>
         </div>
       )}
+      <br></br>
+     
+          <div className="formbold-input-flex">
+            <div>
+                <h4>Select Your CSV file </h4>
+                <label htmlFor="firstname"  required>   </label>
+                <input
+                type="file" accept=".csv" onChange={handleFileUpload}
+                
+                className="formbold-form-input"
+                 required />
+            </div>
+            <div>
+                <h4>Select Your HTML Template</h4>
+                <label htmlFor="lastname" className="formbold-form-label">  </label>
+                <input
+                type="file" accept=".html"  onChange={handlehtml}
+                placeholder="Cooper"
+                className="formbold-form-input"
+                />
+            </div>
+          </div>
+          <div>
+              <h4>Your Subject</h4>
+              <label htmlFor="message" className="formbold-form-label">  </label>
+              <textarea 
+                  rows="6"
+                  name="message"
+                  id="message"
+                  placeholder="Enter Your Subject Here !"
+                  className="formbold-form-input"
+                  onChange={(e)=>setSubject(e.target.value)}
+              ></textarea>
+          </div>
+            <div>
+              <h4>Body & "Your Message"</h4>
+              <label htmlFor="message" className="formbold-form-label">  </label>
+              <textarea
+                  rows="6"
+                  name="message"
+                  id="message"
+                  placeholder="Enter Your Message Here !"
+                  className="formbold-form-input"
+                  onChange={(e)=>setTextmsg(e.target.value)}
+              ></textarea>
+          </div>
+  
+          <button className="formbold-btn" onClick={handleSendEmails}>
+              Send
+          </button>
+      
     </div>
+  </div>
   );
-};
-
-// Reusable components
-const InstructionStep = ({ number, title, content, image }) => (
-  <div className="instruction-step">
-    <div className="step-header">
-      <span className="step-number">{number}</span>
-      <h3>{title}</h3>
-    </div>
-    <p>{content}</p>
-    {image && <img src={`/assets/${image}`} alt={title} className="step-image" />}
-  </div>
-);
-
-const SupportContact = ({ method, details, link }) => (
-  <div className="support-contact">
-    <strong>{method}:</strong>
-    <a href={link} target="_blank" rel="noopener noreferrer">
-      {details}
-    </a>
-  </div>
-);
+}
 
 export default ChetakMail;
