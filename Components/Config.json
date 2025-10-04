@@ -1,3 +1,4 @@
 {
-    "API_URL": "https://back-auth-five.vercel.app" 
+   "API_URL_nouse": "https://back-auth-five.vercel.app",
+    "API_URL": "https://unregulated-blithefully-allena.ngrok-free.dev"
   }
